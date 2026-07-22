@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login · TinyFeedback</title>
+    <meta name="description" content="Sign in to the TinyFeedback dashboard." />
+    <link rel="stylesheet" href="/styles.css" />
+    <script>
+      (function () {
+        var saved = localStorage.getItem("tf-theme");
+        var dark =
+          saved === "dark" ||
+          (saved !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+      })();
+    </script>
+  </head>
+  <body class="bg-background text-foreground">
+    <main class="mx-auto flex min-h-screen w-full max-w-sm flex-col justify-center px-6 py-16">
+      <h1 class="text-2xl font-semibold tracking-tight">TinyFeedback</h1>
+      <p class="mt-2 text-sm text-muted">Sign in to view your dashboard.</p>
+
+      <form id="loginForm" class="mt-8 flex flex-col gap-4" autocomplete="current-password">
+        <label class="flex flex-col gap-1.5">
+          <span class="text-xs font-medium text-muted">Password</span>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            required
+            autofocus
+            class="h-10 rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus:border-foreground"
+            placeholder="Admin password"
+          />
+        </label>
+        <p id="error" class="hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
+        <button
+          type="submit"
+          id="submitBtn"
+          class="inline-flex h-10 items-center justify-center rounded-full bg-accent px-5 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-50"
+        >
+          Sign in
+        </button>
+      </form>
+    </main>
+    <script>
+      (function () {
+        var form = document.getElementById("loginForm");
+        var password = document.getElementById("password");
+        var error = document.getElementById("error");
+        var submitBtn = document.getElementById("submitBtn");
+
+        form.addEventListener("submit", function (e) {
+          e.preventDefault();
+          error.classList.add("hidden");
+          error.textContent = "";
+          submitBtn.disabled = true;
+
+          fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "same-origin",
+            body: JSON.stringify({ password: password.value }),
+          })
+            .then(function (res) {
+              return res.json().then(function (data) {
+                if (!res.ok) throw new Error(data.error || "Login failed");
+                return data;
+              });
+            })
+            .then(function () {
+              location.href = "/dashboard.html";
+            })
+            .catch(function (err) {
+              error.textContent = err.message || "Login failed";
+              error.classList.remove("hidden");
+              submitBtn.disabled = false;
+              password.focus();
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>

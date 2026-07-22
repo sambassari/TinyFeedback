@@ -1,0 +1,18 @@
+services:
+  tinyfeedback:
+    build: .
+    image: tinyfeedback:latest
+    ports:
+      - "${PORT:-3847}:3847"
+    env_file:
+      - .env
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "3847"
+      PUBLIC_URL: ${PUBLIC_URL:-}
+    volumes:
+      - tinyfeedback-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  tinyfeedback-data:

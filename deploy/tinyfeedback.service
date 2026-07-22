@@ -1,0 +1,28 @@
+# systemd unit — run TinyFeedback without Docker
+# 1. Clone repo to /opt/tinyfeedback, npm install && npm run build:css
+# 2. Create /opt/tinyfeedback/.env with ADMIN_PASSWORD, SESSION_SECRET, PUBLIC_URL
+# 3. Create user: useradd --system --home /opt/tinyfeedback --shell /usr/sbin/nologin tf
+# 4. chown -R tf:tf /opt/tinyfeedback
+# 5. cp deploy/tinyfeedback.service /etc/systemd/system/
+# 6. systemctl daemon-reload && systemctl enable --now tinyfeedback
+
+[Unit]
+Description=TinyFeedback
+After=network.target
+
+[Service]
+Type=simple
+User=tf
+Group=tf
+WorkingDirectory=/opt/tinyfeedback
+EnvironmentFile=/opt/tinyfeedback/.env
+Environment=HOST=127.0.0.1
+Environment=PORT=3847
+ExecStart=/usr/bin/node server.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,10 @@
+# Reverse proxy for TinyFeedback (no Docker required for the app itself).
+# Point DNS for tinyfeedback.example.com here, then:
+#   caddy run --config deploy/Caddyfile
+#
+# App should listen on 127.0.0.1:3847 (default HOST).
+
+tinyfeedback.example.com {
+	encode gzip
+	reverse_proxy 127.0.0.1:3847
+}

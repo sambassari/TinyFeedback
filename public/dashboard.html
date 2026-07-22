@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard · TinyFeedback</title>
+    <meta name="description" content="Review feedback collected by TinyFeedback." />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="bg-background text-foreground">
+    <main class="mx-auto w-full max-w-3xl px-6 py-10 sm:py-14">
+      <header class="flex flex-wrap items-end justify-between gap-4 border-b border-border pb-8">
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight">TinyFeedback</h1>
+          <p class="mt-2 max-w-md text-sm leading-relaxed text-muted">
+            Feedback, API access, and admin settings.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            id="themeBtn"
+            class="inline-flex h-9 items-center rounded-full border border-border bg-card px-3.5 text-sm font-medium text-foreground transition hover:bg-background"
+          >
+            Dark
+          </button>
+          <a
+            href="/demo.html"
+            class="inline-flex h-9 items-center rounded-full border border-border bg-card px-3.5 text-sm font-medium text-foreground transition hover:bg-background"
+          >
+            Demo
+          </a>
+          <button
+            type="button"
+            id="logoutBtn"
+            class="inline-flex h-9 items-center rounded-full bg-accent px-3.5 text-sm font-medium text-background transition hover:opacity-90"
+          >
+            Log out
+          </button>
+        </div>
+      </header>
+
+      <nav class="mt-6 flex flex-wrap gap-1.5" role="tablist" aria-label="Dashboard sections">
+        <button type="button" role="tab" id="tab-feedback" data-tab="feedback" aria-selected="true" aria-controls="panel-feedback" class="dash-tab is-active">
+          Feedback
+        </button>
+        <button type="button" role="tab" id="tab-api" data-tab="api" aria-selected="false" aria-controls="panel-api" class="dash-tab">
+          API
+        </button>
+        <button type="button" role="tab" id="tab-settings" data-tab="settings" aria-selected="false" aria-controls="panel-settings" class="dash-tab">
+          Settings
+        </button>
+      </nav>
+
+      <div id="panel-feedback" role="tabpanel" aria-labelledby="tab-feedback">
+        <section class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Summary">
+          <div class="rounded-lg border border-border bg-card p-4">
+            <strong id="statTotal" class="block text-2xl font-semibold tracking-tight">0</strong>
+            <span class="text-xs text-muted">Total</span>
+          </div>
+          <div class="rounded-lg border border-border bg-card p-4">
+            <strong id="statUp" class="block text-2xl font-semibold tracking-tight">0</strong>
+            <span class="text-xs text-muted">Upvotes</span>
+          </div>
+          <div class="rounded-lg border border-border bg-card p-4">
+            <strong id="statBugs" class="block text-2xl font-semibold tracking-tight">0</strong>
+            <span class="text-xs text-muted">Bugs</span>
+          </div>
+          <div class="rounded-lg border border-border bg-card p-4">
+            <strong id="statIdeas" class="block text-2xl font-semibold tracking-tight">0</strong>
+            <span class="text-xs text-muted">Ideas</span>
+          </div>
+        </section>
+
+        <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex flex-wrap gap-1.5" role="group" aria-label="Filter by type" id="filters">
+            <button type="button" data-filter="all" aria-pressed="true" class="filter-chip is-active">All</button>
+            <button type="button" data-filter="rating" aria-pressed="false" class="filter-chip">Rating</button>
+            <button type="button" data-filter="comment" aria-pressed="false" class="filter-chip">Comment</button>
+            <button type="button" data-filter="bug" aria-pressed="false" class="filter-chip">Bug</button>
+            <button type="button" data-filter="feature" aria-pressed="false" class="filter-chip">Idea</button>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <a
+              href="/api/export.csv"
+              class="inline-flex h-8 items-center rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground transition hover:bg-background"
+            >
+              Export CSV
+            </a>
+            <button
+              type="button"
+              id="refreshBtn"
+              class="inline-flex h-8 items-center rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground transition hover:bg-background"
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <section id="list" class="mt-6 flex flex-col gap-3" aria-live="polite"></section>
+      </div>
+
+      <div id="panel-api" role="tabpanel" aria-labelledby="tab-api" hidden>
+        <section class="mt-8 space-y-8">
+          <div>
+            <h2 class="text-lg font-semibold tracking-tight">API tokens</h2>
+            <p class="mt-1 text-sm text-muted">
+              Use Bearer tokens to read, delete, and export feedback from scripts or other services.
+              Tokens are shown once when created.
+            </p>
+
+            <form id="tokenForm" class="mt-4 flex flex-wrap items-end gap-3">
+              <label class="min-w-[12rem] flex-1 text-sm">
+                <span class="mb-1.5 block text-muted">Name</span>
+                <input
+                  type="text"
+                  id="tokenName"
+                  name="name"
+                  maxlength="64"
+                  placeholder="CI export"
+                  class="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none ring-offset-background focus:ring-2 focus:ring-accent"
+                />
+              </label>
+              <button
+                type="submit"
+                class="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-medium text-background transition hover:opacity-90"
+              >
+                Generate token
+              </button>
+            </form>
+
+            <div
+              id="tokenReveal"
+              class="mt-4 hidden rounded-lg border border-border bg-card p-4"
+              role="status"
+            >
+              <p class="text-sm font-medium">Copy this token now. It won’t be shown again.</p>
+              <code id="tokenRevealValue" class="mt-2 block break-all rounded-md bg-background px-3 py-2 text-sm"></code>
+              <button
+                type="button"
+                id="tokenCopyBtn"
+                class="mt-3 inline-flex h-8 items-center rounded-full border border-border px-3 text-sm font-medium transition hover:bg-background"
+              >
+                Copy
+              </button>
+            </div>
+
+            <p id="tokenMsg" class="mt-3 hidden text-sm" role="status"></p>
+            <div id="tokenList" class="mt-4 flex flex-col gap-2" aria-live="polite"></div>
+          </div>
+
+          <div class="border-t border-border pt-8">
+            <h2 class="text-lg font-semibold tracking-tight">API docs</h2>
+            <p class="mt-1 text-sm text-muted">
+              Base URL is this server. Authenticate with a session cookie (dashboard) or
+              <code class="text-foreground">Authorization: Bearer &lt;token&gt;</code>.
+            </p>
+
+            <div class="mt-5 space-y-5 text-sm">
+              <article>
+                <h3 class="font-medium">POST /api/feedback</h3>
+                <p class="mt-1 text-muted">Public. Submit widget feedback. No auth.</p>
+                <pre class="mt-2 overflow-x-auto rounded-lg border border-border bg-card p-3 text-xs leading-relaxed">curl -X POST $BASE/api/feedback \
+  -H 'Content-Type: application/json' \
+  -d '{"type":"comment","message":"Hello","pageUrl":"https://example.com"}'</pre>
+              </article>
+
+              <article>
+                <h3 class="font-medium">GET /api/feedback</h3>
+                <p class="mt-1 text-muted">List feedback. Optional <code class="text-foreground">?type=bug</code>.</p>
+                <pre class="mt-2 overflow-x-auto rounded-lg border border-border bg-card p-3 text-xs leading-relaxed">curl $BASE/api/feedback \
+  -H "Authorization: Bearer $TOKEN"</pre>
+              </article>
+
+              <article>
+                <h3 class="font-medium">DELETE /api/feedback/:id</h3>
+                <p class="mt-1 text-muted">Delete one item.</p>
+                <pre class="mt-2 overflow-x-auto rounded-lg border border-border bg-card p-3 text-xs leading-relaxed">curl -X DELETE $BASE/api/feedback/ITEM_ID \
+  -H "Authorization: Bearer $TOKEN"</pre>
+              </article>
+
+              <article>
+                <h3 class="font-medium">GET /api/export.csv</h3>
+                <p class="mt-1 text-muted">Download all feedback as CSV.</p>
+                <pre class="mt-2 overflow-x-auto rounded-lg border border-border bg-card p-3 text-xs leading-relaxed">curl $BASE/api/export.csv \
+  -H "Authorization: Bearer $TOKEN" -o feedback.csv</pre>
+              </article>
+
+              <article>
+                <h3 class="font-medium">GET /api/health</h3>
+                <p class="mt-1 text-muted">Public health check.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div id="panel-settings" role="tabpanel" aria-labelledby="tab-settings" hidden>
+        <section class="mt-8 space-y-8">
+          <div>
+            <h2 class="text-lg font-semibold tracking-tight">Public URL</h2>
+            <p class="mt-1 text-sm text-muted">
+              The domain where TinyFeedback is reachable, e.g.
+              <code class="text-foreground">https://tinyfeedback.example.com</code>.
+              Used in the install snippet (not the same as allowed site domains below).
+            </p>
+            <form id="publicUrlForm" class="mt-4 flex flex-wrap items-end gap-3">
+              <label class="min-w-[16rem] flex-1 text-sm">
+                <span class="mb-1.5 block text-muted">TinyFeedback URL</span>
+                <input
+                  type="url"
+                  id="publicUrlInput"
+                  name="publicUrl"
+                  placeholder="https://tinyfeedback.example.com"
+                  class="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+                />
+              </label>
+              <button
+                type="submit"
+                class="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-medium text-background transition hover:opacity-90"
+              >
+                Save
+              </button>
+            </form>
+            <p id="publicUrlHint" class="mt-2 text-xs text-muted"></p>
+            <p id="publicUrlMsg" class="mt-2 hidden text-sm" role="status"></p>
+          </div>
+
+          <div class="border-t border-border pt-8">
+            <h2 class="text-lg font-semibold tracking-tight">Install</h2>
+            <p class="mt-1 text-sm text-muted">
+              Paste this on any site you want feedback from. Uses your public URL when set.
+            </p>
+            <pre
+              id="installSnippet"
+              class="mt-4 overflow-x-auto rounded-lg border border-border bg-card p-3 text-xs leading-relaxed"
+            ></pre>
+            <button
+              type="button"
+              id="installCopyBtn"
+              class="mt-3 inline-flex h-8 items-center rounded-full border border-border px-3 text-sm font-medium transition hover:bg-background"
+            >
+              Copy snippet
+            </button>
+            <p id="installMsg" class="mt-2 hidden text-sm" role="status"></p>
+          </div>
+
+          <div class="border-t border-border pt-8">
+            <h2 class="text-lg font-semibold tracking-tight">Allowed domains</h2>
+            <p class="mt-1 text-sm text-muted">
+              Sites that may load the widget and POST feedback. With auto-add on, a new site is
+              registered the first time it sends feedback.
+            </p>
+
+            <label class="mt-4 flex cursor-pointer items-start gap-3 text-sm">
+              <input
+                type="checkbox"
+                id="autoAddDomains"
+                class="mt-1 h-4 w-4 rounded border-border"
+                checked
+              />
+              <span>
+                <span class="font-medium">Auto-add domains</span>
+                <span class="mt-0.5 block text-muted">
+                  When someone submits from a new origin, add it to this list automatically.
+                </span>
+              </span>
+            </label>
+
+            <form id="domainForm" class="mt-4 flex flex-wrap items-end gap-3">
+              <label class="min-w-[14rem] flex-1 text-sm">
+                <span class="mb-1.5 block text-muted">Domain</span>
+                <input
+                  type="text"
+                  id="domainInput"
+                  name="domain"
+                  placeholder="example.com or https://app.example.com"
+                  class="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+                />
+              </label>
+              <button
+                type="submit"
+                class="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-medium text-background transition hover:opacity-90"
+              >
+                Add domain
+              </button>
+            </form>
+            <p id="domainMsg" class="mt-3 hidden text-sm" role="status"></p>
+            <div id="domainList" class="mt-4 flex flex-col gap-2" aria-live="polite"></div>
+          </div>
+        </section>
+
+        <section class="mt-10 max-w-md border-t border-border pt-8">
+          <h2 class="text-lg font-semibold tracking-tight">Change password</h2>
+          <p class="mt-1 text-sm text-muted">
+            Updates the admin password stored in <code class="text-foreground">data/admin.json</code>.
+            Minimum 6 characters.
+          </p>
+
+          <form id="passwordForm" class="mt-5 space-y-4">
+            <label class="block text-sm">
+              <span class="mb-1.5 block text-muted">Current password</span>
+              <input
+                type="password"
+                id="currentPassword"
+                name="currentPassword"
+                required
+                autocomplete="current-password"
+                class="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+              />
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1.5 block text-muted">New password</span>
+              <input
+                type="password"
+                id="newPassword"
+                name="newPassword"
+                required
+                minlength="6"
+                autocomplete="new-password"
+                class="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+              />
+            </label>
+            <label class="block text-sm">
+              <span class="mb-1.5 block text-muted">Confirm new password</span>
+              <input
+                type="password"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+                minlength="6"
+                autocomplete="new-password"
+                class="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-accent"
+              />
+            </label>
+            <button
+              type="submit"
+              class="inline-flex h-10 items-center rounded-full bg-accent px-4 text-sm font-medium text-background transition hover:opacity-90"
+            >
+              Update password
+            </button>
+            <p id="passwordMsg" class="hidden text-sm" role="status"></p>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <style>
+      .dash-tab,
+      .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        height: 2rem;
+        padding: 0 0.85rem;
+        border-radius: 9999px;
+        border: 1px solid var(--color-border);
+        background: transparent;
+        color: var(--color-muted);
+        font-size: 0.8125rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+      }
+      .dash-tab:hover,
+      .filter-chip:hover {
+        color: var(--color-foreground);
+      }
+      .dash-tab.is-active,
+      .filter-chip.is-active {
+        background: var(--color-accent);
+        border-color: transparent;
+        color: var(--color-background);
+      }
+      pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+    </style>
+    <script src="/dashboard.js"></script>
+  </body>
+</html>

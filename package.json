@@ -1,0 +1,39 @@
+{
+  "name": "tinyfeedback",
+  "version": "1.0.0",
+  "description": "Minimal self-hosted feedback widget — one script, vanilla JS, Tailwind UI",
+  "license": "MIT",
+  "author": "Sam Bassari",
+  "homepage": "https://github.com/sambassari/TinyFeedback#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/sambassari/TinyFeedback.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sambassari/TinyFeedback/issues"
+  },
+  "keywords": [
+    "feedback",
+    "widget",
+    "self-hosted",
+    "opensource",
+    "vanilla-js",
+    "tailwindcss"
+  ],
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/styles.css -o ./public/styles.css --minify",
+    "dev:css": "tailwindcss -i ./src/styles.css -o ./public/styles.css --watch",
+    "prestart": "npm run build:css",
+    "start": "node server.js",
+    "dev": "npm run build:css && node --watch server.js"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.11",
+    "tailwindcss": "^4.1.11"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

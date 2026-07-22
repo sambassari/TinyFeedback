@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TinyFeedback</title>
+    <meta
+      name="description"
+      content="TinyFeedback is an open-source feedback widget developers can add to any website with one script. Every Experience Matters."
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script>
+      (function () {
+        var dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.classList.toggle("dark", dark);
+      })();
+    </script>
+  </head>
+  <body class="bg-background text-foreground">
+    <main class="mx-auto flex min-h-screen w-full max-w-xl flex-col justify-center px-6 py-20">
+      <h1 class="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+        TinyFeedback
+      </h1>
+      <p class="mt-4 max-w-md text-base leading-relaxed text-muted">
+        TinyFeedback is an open-source feedback widget developers can add to any website
+        with one script.
+      </p>
+      <p class="mt-3 text-sm font-medium tracking-wide text-foreground">
+        Every Experience Matters.
+      </p>
+
+      <div
+        class="mt-8 overflow-x-auto rounded-lg border border-border bg-card px-4 py-3 font-mono text-sm text-foreground"
+      >
+        <code id="embedSnippet">&lt;script src="/tinyfeedback.js"&gt;&lt;/script&gt;</code>
+      </div>
+      <script>
+        (function () {
+          function setSnippet(base) {
+            var b = String(base || location.origin).replace(/\/$/, "");
+            document.getElementById("embedSnippet").textContent =
+              '<script src="' + b + '/tinyfeedback.js" data-endpoint="' + b + '"><\/script>';
+          }
+          setSnippet(location.origin);
+          fetch("/api/config")
+            .then(function (res) {
+              return res.json();
+            })
+            .then(function (data) {
+              if (data && data.publicUrl) setSnippet(data.publicUrl);
+            })
+            .catch(function () {});
+        })();
+      </script>
+
+      <div class="mt-8 flex flex-wrap items-center gap-3">
+        <a
+          href="/dashboard.html"
+          class="inline-flex h-10 items-center rounded-full bg-accent px-5 text-sm font-medium text-background transition hover:opacity-90"
+        >
+          Open dashboard
+        </a>
+        <a
+          href="https://github.com/sambassari/TinyFeedback"
+          class="inline-flex h-10 items-center rounded-full border border-border bg-card px-5 text-sm font-medium text-foreground transition hover:bg-background"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </a>
+      </div>
+    </main>
+    <script src="/tinyfeedback.js"></script>
+  </body>
+</html>
