@@ -11,9 +11,19 @@ TinyFeedback is an open-source feedback widget developers can add to any website
 ></script>
 ```
 
+<p align="center">
+  <img src="docs/screenshots/widget.png" alt="TinyFeedback widget open on the demo page" width="900" />
+</p>
+
 Visitors can rate a page, leave a comment, report a bug, or suggest an idea. Each submission includes the page URL and basic browser info. You get a password-protected dashboard, API tokens, domain allowlisting, dark mode, and CSV export.
 
 No React. No frameworks. Vanilla HTML, CSS, and JS — Tailwind only at build time for CSS. **Zero runtime npm dependencies.**
+
+<p align="center">
+  <img src="docs/screenshots/demo.png" alt="TinyFeedback demo landing page" width="440" />
+  &nbsp;
+  <img src="docs/screenshots/dashboard.png" alt="TinyFeedback dashboard inbox" width="440" />
+</p>
 
 ## Features
 
@@ -244,6 +254,7 @@ TinyFeedback/
 ├── public/                 # widget, dashboard, demo, built CSS
 ├── src/styles.css          # Tailwind source
 ├── deploy/                 # Caddy, Nginx, systemd (no Docker)
+├── docs/screenshots/       # README images
 ├── Dockerfile
 ├── docker-compose.yml
 ├── data/                   # runtime JSON (volume / gitignored)
