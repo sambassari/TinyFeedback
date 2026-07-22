@@ -1,6 +1,6 @@
 {
   "name": "tinyfeedback",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Minimal self-hosted feedback widget — one script, vanilla JS, Tailwind UI",
   "license": "MIT",
   "author": "Sam Bassari",

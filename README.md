@@ -19,7 +19,7 @@ Visitors can rate a page, leave a comment, report a bug, or suggest an idea. Eac
 
 No React. No frameworks. Vanilla HTML, CSS, and JS — Tailwind only at build time for CSS. **Zero runtime npm dependencies.**
 
-Current release: **v1.1.0** — see [CHANGELOG.md](CHANGELOG.md).
+Current release: **v1.2.0** — see [CHANGELOG.md](CHANGELOG.md).
 
 <p align="center">
   <img src="docs/screenshots/demo.png" alt="TinyFeedback demo landing page" width="440" />
@@ -30,11 +30,11 @@ Current release: **v1.1.0** — see [CHANGELOG.md](CHANGELOG.md).
 ## Features
 
 - One-script embed (Shadow DOM widget)
-- Dashboard: feedback inbox, API docs/tokens, settings
-- Public URL setting (so snippets use `tinyfeedback.example.com`, not `127.0.0.1`)
-- Allowed domains for sites that embed the widget (+ optional auto-add)
-- Spam protection: per-IP rate limits + honeypot field
-- Bearer API tokens for list / delete / export
+- NPS (0–10), thumbs rating, comment, bug, idea
+- Optional name + email for follow-up research
+- Dashboard research snapshot (NPS, segments, top pages)
+- Public URL, allowed domains, API tokens, CSV export
+- Spam protection: per-IP rate limits + honeypot
 - JSON file storage under `data/` (gitignored)
 
 ## Quick start (local)
@@ -201,8 +201,11 @@ Create feedback body:
 
 ```json
 {
-  "type": "bug",
-  "message": "Checkout button does nothing on mobile",
+  "type": "nps",
+  "score": 9,
+  "message": "Fast checkout",
+  "name": "Alex",
+  "email": "alex@example.com",
   "pageUrl": "https://example.com/checkout",
   "userAgent": "…",
   "language": "en-US",
@@ -210,7 +213,9 @@ Create feedback body:
 }
 ```
 
-`type` is `rating`, `comment`, `bug`, or `feature`. For ratings also send `"rating": "up"` or `"down"`.
+`type` is `nps`, `rating`, `comment`, `bug`, or `feature`.  
+For NPS send `"score": 0`–`10`. For ratings send `"rating": "up"` or `"down"`.  
+`name` and `email` are optional on every type.
 
 ---
 
@@ -272,8 +277,8 @@ SemVer in `package.json` (source of truth). The server reads it for `/api/health
 # bump when releasing
 # 1. edit package.json version + CHANGELOG.md + public/tinyfeedback.js banner
 # 2. commit, tag, push
-git tag v1.1.0
-git push origin v1.1.0
+git tag v1.2.0
+git push origin v1.2.0
 ```
 
 ## Contributing

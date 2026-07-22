@@ -27,7 +27,10 @@ const DATA_DIR = path.join(ROOT, "data");
 const DB_FILE = path.join(DATA_DIR, "feedback.json");
 const MAX_BODY = 32 * 1024;
 const MAX_MESSAGE = 2000;
-const TYPES = new Set(["rating", "comment", "bug", "feature"]);
+const TYPES = new Set(["nps", "rating", "comment", "bug", "feature"]);
+const MAX_EMAIL = 254;
+const MAX_NAME = 80;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PROTECTED_PAGES = new Set(["/dashboard.html", "/dashboard.js"]);
 
 const MIME = {
@@ -185,7 +188,10 @@ function toCsv(items) {
     "id",
     "type",
     "rating",
+    "score",
     "message",
+    "name",
+    "email",
     "pageUrl",
     "userAgent",
     "language",
@@ -197,7 +203,10 @@ function toCsv(items) {
       item.id,
       item.type,
       item.rating ?? "",
+      item.score ?? "",
       item.message ?? "",
+      item.name ?? "",
+      item.email ?? "",
       item.pageUrl ?? "",
       item.userAgent ?? "",
       item.language ?? "",
@@ -217,9 +226,10 @@ function sanitizeFeedback(input, req) {
 
   const type = String(input.type || "").toLowerCase();
   if (!TYPES.has(type)) {
-    throw Object.assign(new Error("type must be rating, comment, bug, or feature"), {
-      status: 400,
-    });
+    throw Object.assign(
+      new Error("type must be nps, rating, comment, bug, or feature"),
+      { status: 400 }
+    );
   }
 
   let rating = null;
@@ -230,12 +240,27 @@ function sanitizeFeedback(input, req) {
     rating = input.rating;
   }
 
+  let score = null;
+  if (type === "nps") {
+    const n = Number(input.score);
+    if (!Number.isInteger(n) || n < 0 || n > 10) {
+      throw Object.assign(new Error("score must be an integer from 0 to 10"), { status: 400 });
+    }
+    score = n;
+  }
+
   let message = String(input.message || "").trim();
   if (message.length > MAX_MESSAGE) {
     throw Object.assign(new Error(`message max length is ${MAX_MESSAGE}`), { status: 400 });
   }
   if ((type === "comment" || type === "bug" || type === "feature") && !message) {
     throw Object.assign(new Error("message is required"), { status: 400 });
+  }
+
+  const name = String(input.name || "").trim().slice(0, MAX_NAME);
+  let email = String(input.email || "").trim().slice(0, MAX_EMAIL);
+  if (email && !EMAIL_RE.test(email)) {
+    throw Object.assign(new Error("email looks invalid"), { status: 400 });
   }
 
   const pageUrl = String(input.pageUrl || req.headers.referer || "").slice(0, 2048);
@@ -247,7 +272,10 @@ function sanitizeFeedback(input, req) {
     id: randomUUID(),
     type,
     rating,
+    score,
     message,
+    name,
+    email,
     pageUrl,
     userAgent,
     language,

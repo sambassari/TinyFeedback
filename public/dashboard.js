@@ -184,18 +184,20 @@
   }
 
   function typeLabel(item) {
+    if (item.type === "nps") return "NPS " + String(item.score);
     if (item.type === "rating") return item.rating === "up" ? "Upvote" : "Downvote";
     if (item.type === "feature") return "Idea";
     return item.type.charAt(0).toUpperCase() + item.type.slice(1);
   }
 
+  function npsBucket(score) {
+    if (score >= 9) return "promoter";
+    if (score >= 7) return "passive";
+    return "detractor";
+  }
+
   function updateStats(all) {
     document.getElementById("statTotal").textContent = String(all.length);
-    document.getElementById("statUp").textContent = String(
-      all.filter(function (i) {
-        return i.type === "rating" && i.rating === "up";
-      }).length
-    );
     document.getElementById("statBugs").textContent = String(
       all.filter(function (i) {
         return i.type === "bug";
@@ -206,6 +208,71 @@
         return i.type === "feature";
       }).length
     );
+
+    var npsItems = all.filter(function (i) {
+      return i.type === "nps" && typeof i.score === "number";
+    });
+    var npsEl = document.getElementById("statNps");
+    var breakdownEl = document.getElementById("npsBreakdown");
+    var topPagesEl = document.getElementById("topPages");
+
+    if (!npsItems.length) {
+      npsEl.textContent = "—";
+      breakdownEl.textContent = "No NPS scores yet. Scores use the standard 0–10 recommend scale.";
+    } else {
+      var promoters = 0;
+      var passives = 0;
+      var detractors = 0;
+      var sum = 0;
+      for (var i = 0; i < npsItems.length; i++) {
+        var score = npsItems[i].score;
+        sum += score;
+        var bucket = npsBucket(score);
+        if (bucket === "promoter") promoters += 1;
+        else if (bucket === "passive") passives += 1;
+        else detractors += 1;
+      }
+      var n = npsItems.length;
+      var nps = Math.round(((promoters - detractors) / n) * 100);
+      var avg = (sum / n).toFixed(1);
+      npsEl.textContent = (nps > 0 ? "+" : "") + String(nps);
+      breakdownEl.textContent =
+        n +
+        " responses · avg " +
+        avg +
+        " · " +
+        promoters +
+        " promoters · " +
+        passives +
+        " passives · " +
+        detractors +
+        " detractors";
+    }
+
+    var pageCounts = {};
+    for (var p = 0; p < all.length; p++) {
+      var url = all[p].pageUrl || "(no page)";
+      pageCounts[url] = (pageCounts[url] || 0) + 1;
+    }
+    var ranked = Object.keys(pageCounts)
+      .map(function (url) {
+        return { url: url, count: pageCounts[url] };
+      })
+      .sort(function (a, b) {
+        return b.count - a.count;
+      })
+      .slice(0, 3);
+    if (!ranked.length) {
+      topPagesEl.textContent = "";
+    } else {
+      topPagesEl.innerHTML =
+        "Top pages: " +
+        ranked
+          .map(function (row) {
+            return escapeHtml(row.url) + " (" + row.count + ")";
+          })
+          .join(" · ");
+    }
   }
 
   function filtered() {
@@ -240,6 +307,20 @@
             escapeHtml(item.message) +
             "</p>"
           : '<p class="mt-3 text-sm text-muted">No message</p>';
+        var contact =
+          item.name || item.email
+            ? '<p class="mt-2 text-sm text-foreground">' +
+              (item.name ? escapeHtml(item.name) : "") +
+              (item.name && item.email ? " · " : "") +
+              (item.email
+                ? '<a class="underline-offset-4 hover:underline" href="mailto:' +
+                  escapeHtml(item.email) +
+                  '">' +
+                  escapeHtml(item.email) +
+                  "</a>"
+                : "") +
+              "</p>"
+            : "";
         var url = item.pageUrl
           ? '<p class="mt-2 truncate text-sm"><a class="text-foreground underline-offset-4 hover:underline" href="' +
             escapeHtml(item.pageUrl) +
@@ -258,6 +339,7 @@
           '" class="inline-flex h-8 items-center rounded-full px-3 text-sm font-medium text-red-600 transition hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950/40">Delete</button>' +
           "</div>" +
           message +
+          contact +
           url +
           '<div class="mt-3 flex flex-wrap justify-between gap-2 text-xs text-muted">' +
           "<span>" +

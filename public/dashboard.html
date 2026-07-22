@@ -58,12 +58,12 @@
       <div id="panel-feedback" role="tabpanel" aria-labelledby="tab-feedback">
         <section class="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Summary">
           <div class="rounded-lg border border-border bg-card p-4">
-            <strong id="statTotal" class="block text-2xl font-semibold tracking-tight">0</strong>
-            <span class="text-xs text-muted">Total</span>
+            <strong id="statNps" class="block text-2xl font-semibold tracking-tight">—</strong>
+            <span class="text-xs text-muted">NPS</span>
           </div>
           <div class="rounded-lg border border-border bg-card p-4">
-            <strong id="statUp" class="block text-2xl font-semibold tracking-tight">0</strong>
-            <span class="text-xs text-muted">Upvotes</span>
+            <strong id="statTotal" class="block text-2xl font-semibold tracking-tight">0</strong>
+            <span class="text-xs text-muted">Total</span>
           </div>
           <div class="rounded-lg border border-border bg-card p-4">
             <strong id="statBugs" class="block text-2xl font-semibold tracking-tight">0</strong>
@@ -75,9 +75,20 @@
           </div>
         </section>
 
+        <section
+          id="researchSummary"
+          class="mt-4 rounded-lg border border-border bg-card p-4 text-sm"
+          aria-label="Market research summary"
+        >
+          <p class="font-medium">Research snapshot</p>
+          <p id="npsBreakdown" class="mt-1 text-muted">No NPS scores yet.</p>
+          <p id="topPages" class="mt-2 text-muted"></p>
+        </section>
+
         <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
           <div class="flex flex-wrap gap-1.5" role="group" aria-label="Filter by type" id="filters">
             <button type="button" data-filter="all" aria-pressed="true" class="filter-chip is-active">All</button>
+            <button type="button" data-filter="nps" aria-pressed="false" class="filter-chip">NPS</button>
             <button type="button" data-filter="rating" aria-pressed="false" class="filter-chip">Rating</button>
             <button type="button" data-filter="comment" aria-pressed="false" class="filter-chip">Comment</button>
             <button type="button" data-filter="bug" aria-pressed="false" class="filter-chip">Bug</button>

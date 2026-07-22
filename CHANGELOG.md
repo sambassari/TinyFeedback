@@ -3,6 +3,14 @@
 All notable changes to TinyFeedback are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follows [SemVer](https://semver.org/).
 
+## [1.2.0] — 2026-07-22
+
+### Added
+- NPS score type (0–10 recommend scale) in the widget
+- Optional name + email on every submission
+- Dashboard research snapshot: NPS, promoters/passives/detractors, top pages
+- CSV columns for `score`, `name`, and `email`
+
 ## [1.1.0] — 2026-07-22
 
 ### Added
@@ -19,5 +27,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 ### Added
 - Initial self-hosted widget, JSON API, and dashboard
 
+[1.2.0]: https://github.com/sambassari/TinyFeedback/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/sambassari/TinyFeedback/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/sambassari/TinyFeedback/releases/tag/v1.0.0

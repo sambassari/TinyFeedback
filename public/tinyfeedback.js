@@ -1,4 +1,4 @@
-/*! TinyFeedback v1.1.0 | MIT | https://github.com/sambassari/TinyFeedback */
+/*! TinyFeedback v1.2.0 | MIT | https://github.com/sambassari/TinyFeedback */
 (function () {
   "use strict";
 
@@ -43,7 +43,7 @@
     ".tf-btn svg{width:14px;height:14px;flex:0 0 auto}" +
     ".tf-backdrop{position:fixed;inset:0;z-index:2147483001;background:rgba(0,0,0,.32);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .2s ease,visibility .2s}" +
     ".tf-backdrop[data-open=true]{opacity:1;pointer-events:auto;visibility:visible}" +
-    ".tf-panel{position:fixed;z-index:2147483002;bottom:72px;width:min(340px,calc(100vw - 24px));max-height:min(520px,calc(100vh - 100px));overflow:auto;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--fg);box-shadow:0 8px 30px rgba(0,0,0,.12);transform:translateY(8px);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .2s ease,transform .2s ease,visibility .2s}" +
+    ".tf-panel{position:fixed;z-index:2147483002;bottom:72px;width:min(360px,calc(100vw - 24px));max-height:min(560px,calc(100vh - 100px));overflow:auto;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--card);color:var(--fg);box-shadow:0 8px 30px rgba(0,0,0,.12);transform:translateY(8px);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .2s ease,transform .2s ease,visibility .2s}" +
     ".tf-panel[data-side=right]{right:20px}.tf-panel[data-side=left]{left:20px}" +
     ".tf-panel[data-open=true]{opacity:1;pointer-events:auto;visibility:visible;transform:none}" +
     ".tf-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}" +
@@ -51,15 +51,23 @@
     ".tf-sub{margin:4px 0 0;color:var(--muted);font:13px/1.4 ui-sans-serif,system-ui,sans-serif}" +
     ".tf-close{appearance:none;width:32px;height:32px;border:1px solid var(--border);border-radius:999px;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}" +
     ".tf-close:hover{color:var(--fg);background:var(--bg)}" +
-    ".tf-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:0 0 12px;padding:3px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}" +
-    ".tf-tab{appearance:none;border:0;border-radius:8px;min-height:34px;background:transparent;color:var(--muted);font:500 12px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer}" +
+    ".tf-tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:0 0 12px;padding:3px;border:1px solid var(--border);border-radius:10px;background:var(--bg)}" +
+    ".tf-tab{appearance:none;border:0;border-radius:8px;min-height:34px;background:transparent;color:var(--muted);font:500 11px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;padding:0 2px}" +
     ".tf-tab[aria-selected=true]{background:var(--card);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.06);border:1px solid var(--border)}" +
     ".tf-rates{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}" +
     ".tf-rate{appearance:none;min-height:48px;border:1px solid var(--border);border-radius:10px;background:var(--bg);font-size:20px;cursor:pointer}" +
     ".tf-rate[aria-pressed=true]{border-color:var(--fg);background:var(--card)}" +
+    ".tf-nps{margin:0 0 12px}" +
+    ".tf-nps-q{margin:0 0 8px;font:500 12px/1.35 ui-sans-serif,system-ui,sans-serif;color:var(--muted)}" +
+    ".tf-scores{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:3px}" +
+    ".tf-score{appearance:none;min-height:32px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--fg);font:600 11px/1 ui-sans-serif,system-ui,sans-serif;cursor:pointer;padding:0}" +
+    ".tf-score[aria-pressed=true]{border-color:var(--fg);background:var(--accent);color:var(--accent-fg)}" +
+    ".tf-nps-ends{display:flex;justify-content:space-between;margin-top:6px;color:var(--muted);font:11px/1 ui-sans-serif,system-ui,sans-serif}" +
     ".tf-label{display:block;margin:0 0 6px;font:500 12px/1 ui-sans-serif,system-ui,sans-serif;color:var(--muted)}" +
-    ".tf-textarea{width:100%;min-height:96px;resize:vertical;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--bg);color:var(--fg);font:14px/1.45 ui-sans-serif,system-ui,sans-serif}" +
-    ".tf-textarea:focus{outline:2px solid var(--fg);outline-offset:1px;border-color:transparent}" +
+    ".tf-textarea{width:100%;min-height:72px;resize:vertical;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--bg);color:var(--fg);font:14px/1.45 ui-sans-serif,system-ui,sans-serif}" +
+    ".tf-textarea:focus,.tf-input:focus{outline:2px solid var(--fg);outline-offset:1px;border-color:transparent}" +
+    ".tf-contact{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}" +
+    ".tf-input{width:100%;min-height:36px;border:1px solid var(--border);border-radius:10px;padding:8px 10px;background:var(--bg);color:var(--fg);font:13px/1.3 ui-sans-serif,system-ui,sans-serif}" +
     ".tf-meta{margin:8px 0 0;color:var(--muted);font:12px/1.4 ui-sans-serif,system-ui,sans-serif;word-break:break-all}" +
     ".tf-status{min-height:16px;margin:8px 0 0;font:12px/1.3 ui-sans-serif,system-ui,sans-serif;color:var(--muted)}" +
     ".tf-status[data-kind=error]{color:var(--danger)}.tf-status[data-kind=ok]{color:var(--ok)}" +
@@ -135,16 +143,36 @@
     panel.hidden = true;
     wrap.appendChild(panel);
 
-    var state = { open: false, type: "rating", rating: null, busy: false };
+    var state = { open: false, type: "nps", rating: null, score: null, busy: false };
+
+    var scoreButtons = "";
+    for (var s = 0; s <= 10; s++) {
+      scoreButtons +=
+        '<button type="button" class="tf-score" data-score="' +
+        s +
+        '" aria-label="Score ' +
+        s +
+        '" aria-pressed="false">' +
+        s +
+        "</button>";
+    }
 
     panel.innerHTML =
       '<div class="tf-head"><div><h2 class="tf-title"></h2><p class="tf-sub">Takes about 10 seconds.</p></div>' +
       '<button type="button" class="tf-close" aria-label="Close">&times;</button></div>' +
       '<div class="tf-tabs" role="tablist">' +
+      '<button type="button" class="tf-tab" data-type="nps" role="tab">NPS</button>' +
       '<button type="button" class="tf-tab" data-type="rating" role="tab">Rate</button>' +
       '<button type="button" class="tf-tab" data-type="comment" role="tab">Comment</button>' +
       '<button type="button" class="tf-tab" data-type="bug" role="tab">Bug</button>' +
       '<button type="button" class="tf-tab" data-type="feature" role="tab">Idea</button>' +
+      "</div>" +
+      '<div class="tf-nps">' +
+      '<p class="tf-nps-q">How likely are you to recommend us? (0–10)</p>' +
+      '<div class="tf-scores" role="group" aria-label="NPS score 0 to 10">' +
+      scoreButtons +
+      "</div>" +
+      '<div class="tf-nps-ends"><span>Not likely</span><span>Extremely likely</span></div>' +
       "</div>" +
       '<div class="tf-rates">' +
       '<button type="button" class="tf-rate" data-rating="up" aria-label="Thumbs up" aria-pressed="false">👍</button>' +
@@ -152,17 +180,25 @@
       "</div>" +
       '<label class="tf-label" for="tf-message">Message</label>' +
       '<textarea class="tf-textarea" id="tf-message" maxlength="2000" placeholder="Optional note"></textarea>' +
+      '<div class="tf-contact">' +
+      '<label class="tf-label" style="margin:0">Name<input class="tf-input tf-name" type="text" maxlength="80" autocomplete="name" placeholder="Optional"></label>' +
+      '<label class="tf-label" style="margin:0">Email<input class="tf-input tf-email" type="email" maxlength="254" autocomplete="email" placeholder="Optional"></label>' +
+      "</div>" +
       '<label class="tf-hp" aria-hidden="true">Company<input type="text" class="tf-hp-input" name="company" tabindex="-1" autocomplete="off"></label>' +
       '<p class="tf-meta"></p><p class="tf-status" aria-live="polite"></p>' +
       '<div class="tf-actions"><button type="button" class="tf-submit">Send</button></div>';
 
     panel.querySelector(".tf-title").textContent = opts.title;
     var textarea = panel.querySelector(".tf-textarea");
+    var nameInput = panel.querySelector(".tf-name");
+    var emailInput = panel.querySelector(".tf-email");
     var hpInput = panel.querySelector(".tf-hp-input");
     var statusEl = panel.querySelector(".tf-status");
     var metaEl = panel.querySelector(".tf-meta");
     var submitBtn = panel.querySelector(".tf-submit");
     var ratesWrap = panel.querySelector(".tf-rates");
+    var npsWrap = panel.querySelector(".tf-nps");
+    var scoresWrap = panel.querySelector(".tf-scores");
 
     function pageMeta() {
       return {
@@ -189,15 +225,18 @@
         var t = tabs[i];
         t.setAttribute("aria-selected", t.getAttribute("data-type") === state.type ? "true" : "false");
       }
+      npsWrap.style.display = state.type === "nps" ? "block" : "none";
       ratesWrap.style.display = state.type === "rating" ? "grid" : "none";
       textarea.placeholder =
         state.type === "bug"
           ? "What went wrong?"
           : state.type === "feature"
             ? "What would make this better?"
-            : state.type === "rating"
-              ? "Optional note"
-              : "Your thoughts";
+            : state.type === "nps"
+              ? "What is the main reason for your score?"
+              : state.type === "rating"
+                ? "Optional note"
+                : "Your thoughts";
     }
 
     function syncRating() {
@@ -208,6 +247,15 @@
           "aria-pressed",
           b.getAttribute("data-rating") === state.rating ? "true" : "false"
         );
+      }
+    }
+
+    function syncScore() {
+      var buttons = panel.querySelectorAll(".tf-score");
+      for (var i = 0; i < buttons.length; i++) {
+        var b = buttons[i];
+        var val = Number(b.getAttribute("data-score"));
+        b.setAttribute("aria-pressed", state.score === val ? "true" : "false");
       }
     }
 
@@ -264,6 +312,14 @@
       setStatus("");
     });
 
+    scoresWrap.addEventListener("click", function (e) {
+      var btn = e.target.closest(".tf-score");
+      if (!btn) return;
+      state.score = Number(btn.getAttribute("data-score"));
+      syncScore();
+      setStatus("");
+    });
+
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && state.open) close();
     });
@@ -271,11 +327,17 @@
     submitBtn.addEventListener("click", function () {
       if (state.busy) return;
       var message = (textarea.value || "").trim();
+      var name = (nameInput.value || "").trim();
+      var email = (emailInput.value || "").trim();
+      if (state.type === "nps" && (state.score == null || state.score < 0 || state.score > 10)) {
+        setStatus("Pick a score from 0 to 10.", "error");
+        return;
+      }
       if (state.type === "rating" && !state.rating) {
         setStatus("Pick 👍 or 👎 first.", "error");
         return;
       }
-      if (state.type !== "rating" && !message) {
+      if ((state.type === "comment" || state.type === "bug" || state.type === "feature") && !message) {
         setStatus("Please add a short message.", "error");
         textarea.focus();
         return;
@@ -292,7 +354,10 @@
           Object.assign(pageMeta(), {
             type: state.type,
             rating: state.type === "rating" ? state.rating : null,
+            score: state.type === "nps" ? state.score : null,
             message: message,
+            name: name,
+            email: email,
             _hp: hpInput ? hpInput.value : "",
           })
         ),
@@ -306,8 +371,12 @@
         .then(function () {
           setStatus("Thanks — feedback sent.", "ok");
           textarea.value = "";
+          nameInput.value = "";
+          emailInput.value = "";
           state.rating = null;
+          state.score = null;
           syncRating();
+          syncScore();
           setTimeout(close, 800);
         })
         .catch(function (err) {
@@ -321,6 +390,7 @@
 
     syncTabs();
     syncRating();
+    syncScore();
     refreshMeta();
 
     return {
@@ -335,7 +405,7 @@
 
   var api = {
     __loaded: true,
-    version: "1.1.0",
+    version: "1.2.0",
     init: function (options) {
       if (api._instance) api._instance.destroy();
       api._instance = createWidget(options || {});
