@@ -15,6 +15,7 @@ const { createAuth } = require("./lib/auth");
 const { createDomainStore } = require("./lib/domains");
 const { createSettingsStore } = require("./lib/settings");
 const { createRateLimiter } = require("./lib/rateLimit");
+const { VERSION } = require("./lib/version");
 
 const ROOT = __dirname;
 loadProjectEnv(ROOT);
@@ -295,13 +296,13 @@ async function handleApi(req, res, url) {
   }
 
   if (url.pathname === "/api/health" && req.method === "GET") {
-    send(res, 200, { ok: true, name: "tinyfeedback" });
+    send(res, 200, { ok: true, name: "tinyfeedback", version: VERSION });
     return;
   }
 
   if (url.pathname === "/api/config" && req.method === "GET") {
     const publicUrl = settings.resolveBaseUrl(req);
-    send(res, 200, { publicUrl });
+    send(res, 200, { publicUrl, version: VERSION });
     return;
   }
 
@@ -595,7 +596,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, HOST, () => {
   const local = `http://${HOST}:${PORT}`;
   const publicUrl = settings.get().publicUrl;
-  console.log(`TinyFeedback running at ${local}`);
+  console.log(`TinyFeedback v${VERSION} running at ${local}`);
   if (publicUrl) console.log(`  Public URL: ${publicUrl}`);
   console.log(`  Demo:      ${local}/demo.html`);
   console.log(`  Login:     ${local}/login.html`);

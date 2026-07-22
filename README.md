@@ -19,6 +19,8 @@ Visitors can rate a page, leave a comment, report a bug, or suggest an idea. Eac
 
 No React. No frameworks. Vanilla HTML, CSS, and JS — Tailwind only at build time for CSS. **Zero runtime npm dependencies.**
 
+Current release: **v1.1.0** — see [CHANGELOG.md](CHANGELOG.md).
+
 <p align="center">
   <img src="docs/screenshots/demo.png" alt="TinyFeedback demo landing page" width="440" />
   &nbsp;
@@ -179,8 +181,8 @@ Login is also rate-limited. Prefer HTTPS so the session cookie is marked `Secure
 
 | Method | Path | Auth | Description |
 | --- | --- | --- | --- |
-| `GET` | `/api/health` | No | Health check |
-| `GET` | `/api/config` | No | `{ publicUrl }` |
+| `GET` | `/api/health` | No | Health check (`version`) |
+| `GET` | `/api/config` | No | `{ publicUrl, version }` |
 | `GET`/`POST` | `/api/settings` | Session | Public URL |
 | `POST` | `/api/auth/login` | No | Session cookie |
 | `POST` | `/api/auth/logout` | No | Clear session |
@@ -260,6 +262,18 @@ TinyFeedback/
 ├── data/                   # runtime JSON (volume / gitignored)
 ├── .env.example
 └── README.md
+```
+
+## Versioning
+
+SemVer in `package.json` (source of truth). The server reads it for `/api/health` and `/api/config`; the widget banner matches the same number. Release notes live in [CHANGELOG.md](CHANGELOG.md).
+
+```bash
+# bump when releasing
+# 1. edit package.json version + CHANGELOG.md + public/tinyfeedback.js banner
+# 2. commit, tag, push
+git tag v1.1.0
+git push origin v1.1.0
 ```
 
 ## Contributing

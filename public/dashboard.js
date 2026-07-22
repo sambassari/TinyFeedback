@@ -681,8 +681,22 @@
       });
   });
 
+  function loadVersion() {
+    fetch("/api/config")
+      .then(function (res) {
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data || !data.version) return;
+        var el = document.getElementById("appVersion");
+        if (el) el.textContent = "v" + data.version;
+      })
+      .catch(function () {});
+  }
+
   ensureAuth()
     .then(function () {
+      loadVersion();
       var hash = (location.hash || "").replace(/^#/, "");
       if (hash === "api" || hash === "settings" || hash === "feedback") setTab(hash);
       else setTab("feedback");
