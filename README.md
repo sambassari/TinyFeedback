@@ -287,4 +287,4 @@ Issues and pull requests welcome. Keep changes small and focused. See [CONTRIBUT
 
 ## License
 
-[MIT](LICENSE) © Sam Bassari
+[MIT](LICENSE) © [Sam Bassari](https://sambassari.com)
