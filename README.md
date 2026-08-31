@@ -19,7 +19,7 @@ Visitors can rate a page, leave a comment, report a bug, or suggest an idea. Eac
 
 No React. No frameworks. Vanilla HTML, CSS, and JS — Tailwind only at build time for CSS. **Zero runtime npm dependencies.**
 
-Current release: **v1.2.0** — see [CHANGELOG.md](CHANGELOG.md).
+Current release: **v1.2.1** — see [CHANGELOG.md](CHANGELOG.md).
 
 <p align="center">
   <img src="docs/screenshots/demo.png" alt="TinyFeedback demo landing page" width="440" />
@@ -240,6 +240,7 @@ npm run dev:css    # watch Tailwind
 npm run build:css  # build public/styles.css
 npm start          # build CSS, then serve
 npm run dev        # build CSS, then serve with --watch
+npm test           # node:test (no extra deps)
 ```
 
 | Variable | Default | Description |
@@ -247,6 +248,7 @@ npm run dev        # build CSS, then serve with --watch
 | `PORT` | `3847` | Listen port |
 | `HOST` | `127.0.0.1` | Bind address (`0.0.0.0` in Docker / LAN) |
 | `PUBLIC_URL` | — | e.g. `https://tinyfeedback.example.com` |
+| `DATA_DIR` | `./data` | JSON storage directory |
 | `ADMIN_PASSWORD` | `admin` on localhost only | First-run password |
 | `SESSION_SECRET` | insecure local default | Cookie signing |
 
@@ -257,11 +259,13 @@ Public binds (`HOST` not localhost) require `ADMIN_PASSWORD` and `SESSION_SECRET
 ```
 TinyFeedback/
 ├── server.js
-├── lib/                    # auth, domains, settings, rate limit
+├── lib/                    # auth, domains, settings, rate limit, sanitize
+├── test/                   # node:test (zero extra deps)
 ├── public/                 # widget, dashboard, demo, built CSS
 ├── src/styles.css          # Tailwind source
 ├── deploy/                 # Caddy, Nginx, systemd (no Docker)
 ├── docs/screenshots/       # README images
+├── .github/workflows/ci.yml
 ├── Dockerfile
 ├── docker-compose.yml
 ├── data/                   # runtime JSON (volume / gitignored)
@@ -277,8 +281,8 @@ SemVer in `package.json` (source of truth). The server reads it for `/api/health
 # bump when releasing
 # 1. edit package.json version + CHANGELOG.md + public/tinyfeedback.js banner
 # 2. commit, tag, push
-git tag v1.2.0
-git push origin v1.2.0
+git tag v1.2.1
+git push origin v1.2.1
 ```
 
 ## Contributing

@@ -19,6 +19,7 @@ Local default password is `admin` if env vars are unset. Use `.env` for real cre
 - Keep the stack minimal: vanilla HTML/JS, Tailwind for styles, zero runtime deps on the server.
 - Match the existing tone and UI — clean, quiet, Vercel-simple.
 - Prefer small pull requests with a clear purpose.
+- Run `npm test` before opening a PR.
 - Run `npm run build:css` after changing `src/styles.css`.
 - Don’t commit `data/feedback.json` or secrets.
 
@@ -26,7 +27,8 @@ Local default password is `admin` if env vars are unset. Use `.env` for real cre
 
 1. Fork and create a branch.
 2. Make your change.
-3. Open a PR describing what and why.
+3. Run `npm test`.
+4. Open a PR describing what and why.
 
 ## Reporting bugs
 

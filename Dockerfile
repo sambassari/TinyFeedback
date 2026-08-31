@@ -15,6 +15,9 @@ ENV NODE_ENV=production \
 
 RUN addgroup -S tf && adduser -S tf -G tf
 
+# package.json is required at runtime so lib/version.js can report SemVer
+# (without it /api/health falls back to 0.0.0).
+COPY package.json ./
 COPY server.js ./
 COPY lib ./lib
 COPY --from=build /app/public ./public
