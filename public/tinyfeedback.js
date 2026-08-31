@@ -1,4 +1,4 @@
-/*! TinyFeedback v1.2.0 | MIT | https://github.com/sambassari/TinyFeedback */
+/*! TinyFeedback v1.2.1 | MIT | https://github.com/sambassari/TinyFeedback */
 (function () {
   "use strict";
 
@@ -405,7 +405,7 @@
 
   var api = {
     __loaded: true,
-    version: "1.2.0",
+    version: "1.2.1",
     init: function (options) {
       if (api._instance) api._instance.destroy();
       api._instance = createWidget(options || {});

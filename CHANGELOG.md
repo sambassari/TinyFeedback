@@ -3,6 +3,15 @@
 All notable changes to TinyFeedback are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follows [SemVer](https://semver.org/).
 
+## [1.2.1] — 2026-08-31
+
+### Fixed
+- Docker image now copies `package.json` into the runtime stage so `/api/health` and `/api/config` report the real SemVer instead of `0.0.0`
+
+### Added
+- `npm test` using Node's built-in `node:test` runner (zero extra dependencies)
+- GitHub Actions CI on pull requests and pushes to `main`
+
 ## [1.2.0] — 2026-07-22
 
 ### Added
@@ -27,6 +36,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 ### Added
 - Initial self-hosted widget, JSON API, and dashboard
 
+[1.2.1]: https://github.com/sambassari/TinyFeedback/compare/v1.2.0...v1.2.1
 [1.2.0]: https://github.com/sambassari/TinyFeedback/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/sambassari/TinyFeedback/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/sambassari/TinyFeedback/releases/tag/v1.0.0

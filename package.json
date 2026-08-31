@@ -1,6 +1,6 @@
 {
   "name": "tinyfeedback",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Minimal self-hosted feedback widget — one script, vanilla JS, Tailwind UI",
   "license": "MIT",
   "author": "Sam Bassari",
@@ -27,7 +27,8 @@
     "dev:css": "tailwindcss -i ./src/styles.css -o ./public/styles.css --watch",
     "prestart": "npm run build:css",
     "start": "node server.js",
-    "dev": "npm run build:css && node --watch server.js"
+    "dev": "npm run build:css && node --watch server.js",
+    "test": "node --test test/*.test.js"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.11",

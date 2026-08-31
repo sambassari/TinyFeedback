@@ -8,7 +8,6 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
-const { randomUUID } = require("crypto");
 const { URL } = require("url");
 const { loadProjectEnv } = require("./lib/env");
 const { createAuth } = require("./lib/auth");
@@ -16,6 +15,7 @@ const { createDomainStore } = require("./lib/domains");
 const { createSettingsStore } = require("./lib/settings");
 const { createRateLimiter } = require("./lib/rateLimit");
 const { VERSION } = require("./lib/version");
+const { sanitizeFeedback, TYPES } = require("./lib/sanitize");
 
 const ROOT = __dirname;
 loadProjectEnv(ROOT);
@@ -23,14 +23,11 @@ loadProjectEnv(ROOT);
 const PORT = Number(process.env.PORT) || 3847;
 const HOST = process.env.HOST || "127.0.0.1";
 const PUBLIC = path.join(ROOT, "public");
-const DATA_DIR = path.join(ROOT, "data");
+const DATA_DIR = process.env.DATA_DIR
+  ? path.resolve(process.env.DATA_DIR)
+  : path.join(ROOT, "data");
 const DB_FILE = path.join(DATA_DIR, "feedback.json");
 const MAX_BODY = 32 * 1024;
-const MAX_MESSAGE = 2000;
-const TYPES = new Set(["nps", "rating", "comment", "bug", "feature"]);
-const MAX_EMAIL = 254;
-const MAX_NAME = 80;
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PROTECTED_PAGES = new Set(["/dashboard.html", "/dashboard.js"]);
 
 const MIME = {
@@ -217,71 +214,6 @@ function toCsv(items) {
       .join(",")
   );
   return [header.join(","), ...rows].join("\n") + "\n";
-}
-
-function sanitizeFeedback(input, req) {
-  if (!input || typeof input !== "object") {
-    throw Object.assign(new Error("Invalid JSON body"), { status: 400 });
-  }
-
-  const type = String(input.type || "").toLowerCase();
-  if (!TYPES.has(type)) {
-    throw Object.assign(
-      new Error("type must be nps, rating, comment, bug, or feature"),
-      { status: 400 }
-    );
-  }
-
-  let rating = null;
-  if (type === "rating") {
-    if (input.rating !== "up" && input.rating !== "down") {
-      throw Object.assign(new Error('rating must be "up" or "down"'), { status: 400 });
-    }
-    rating = input.rating;
-  }
-
-  let score = null;
-  if (type === "nps") {
-    const n = Number(input.score);
-    if (!Number.isInteger(n) || n < 0 || n > 10) {
-      throw Object.assign(new Error("score must be an integer from 0 to 10"), { status: 400 });
-    }
-    score = n;
-  }
-
-  let message = String(input.message || "").trim();
-  if (message.length > MAX_MESSAGE) {
-    throw Object.assign(new Error(`message max length is ${MAX_MESSAGE}`), { status: 400 });
-  }
-  if ((type === "comment" || type === "bug" || type === "feature") && !message) {
-    throw Object.assign(new Error("message is required"), { status: 400 });
-  }
-
-  const name = String(input.name || "").trim().slice(0, MAX_NAME);
-  let email = String(input.email || "").trim().slice(0, MAX_EMAIL);
-  if (email && !EMAIL_RE.test(email)) {
-    throw Object.assign(new Error("email looks invalid"), { status: 400 });
-  }
-
-  const pageUrl = String(input.pageUrl || req.headers.referer || "").slice(0, 2048);
-  const userAgent = String(input.userAgent || req.headers["user-agent"] || "").slice(0, 512);
-  const language = String(input.language || "").slice(0, 32);
-  const viewport = String(input.viewport || "").slice(0, 64);
-
-  return {
-    id: randomUUID(),
-    type,
-    rating,
-    score,
-    message,
-    name,
-    email,
-    pageUrl,
-    userAgent,
-    language,
-    viewport,
-    createdAt: new Date().toISOString(),
-  };
 }
 
 function requireAuth(req, res) {
@@ -579,8 +511,6 @@ function serveStatic(req, res, filePath) {
   });
 }
 
-ensureStore();
-
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
@@ -621,13 +551,22 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(PORT, HOST, () => {
-  const local = `http://${HOST}:${PORT}`;
-  const publicUrl = settings.get().publicUrl;
-  console.log(`TinyFeedback v${VERSION} running at ${local}`);
-  if (publicUrl) console.log(`  Public URL: ${publicUrl}`);
-  console.log(`  Demo:      ${local}/demo.html`);
-  console.log(`  Login:     ${local}/login.html`);
-  console.log(`  Dashboard: ${local}/dashboard.html`);
-  console.log(`  Widget:    ${local}/tinyfeedback.js`);
-});
+function start(listenPort = PORT, listenHost = HOST, callback) {
+  ensureStore();
+  return server.listen(listenPort, listenHost, callback);
+}
+
+if (require.main === module) {
+  start(PORT, HOST, () => {
+    const local = `http://${HOST}:${PORT}`;
+    const publicUrl = settings.get().publicUrl;
+    console.log(`TinyFeedback v${VERSION} running at ${local}`);
+    if (publicUrl) console.log(`  Public URL: ${publicUrl}`);
+    console.log(`  Demo:      ${local}/demo.html`);
+    console.log(`  Login:     ${local}/login.html`);
+    console.log(`  Dashboard: ${local}/dashboard.html`);
+    console.log(`  Widget:    ${local}/tinyfeedback.js`);
+  });
+}
+
+module.exports = { server, start, DATA_DIR, VERSION };

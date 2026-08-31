@@ -12,5 +12,6 @@ data/*
 .vscode
 deploy
 agent-transcripts
+test
 *.md
 !README.md
